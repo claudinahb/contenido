@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprendizaje Significativo en la Música</title>
+    
+    <style>
+        
+        /*
+		Montserrat Bold (700)
+		*/
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 700;
+            /*src: url('fonts/montserrat-v25-latin-700.woff2') format('woff2');*/
+			src: url('fonts/Montserrat-Bold.ttf');
+        }
+
+        /*
+		Source Serif 4 Regular (400)
+		*/
+        @font-face {
+            font-family: 'Source Serif 4';
+            font-style: normal;
+            font-weight: 400;
+            /*src: url('fonts/source-serif-4-v10-latin-regular.woff2') format('woff2');*/
+			src: url('fonts/SourceSerif4-Regular.ttf');
+        }
+
+        /* Source Serif 4 Italic */
+        @font-face {
+            font-family: 'Source Serif 4';
+            font-style: italic;
+            font-weight: 400;
+            /*src: url('fonts/source-serif-4-v10-latin-italic.woff2') format('woff2');*/
+			src: url('fonts/SourceSerif4-Italic.ttf');
+        }
+
+        /* Source Serif 4 Semi-Bold (600) */
+        @font-face {
+            font-family: 'Source Serif 4';
+            font-style: normal;
+            font-weight: 600;
+            /*src: url('fonts/source-serif-4-v10-latin-600.woff2') format('woff2');*/
+			src: url('fonts/SourceSerif4-SemiBold.ttf');
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e67e22;
+            --bg-color: #f4f7f6;
+            --text-color: #34495e;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Source Serif 4', serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        h1 { 
+            font-size: 2.2em;
+            border-bottom: 4px solid var(--accent-color); 
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .section { margin-bottom: 45px; }
+
+        .concept-btn {
+            background: #fff;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
+            margin: 5px 5px 5px 0;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .concept-btn:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .definition-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fdf2e9;
+            border-left: 5px solid var(--accent-color);
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .matrix-card {
+            padding: 20px;
+            border: 1px solid #dcdde1;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9em;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .matrix-card:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+        .matrix-card.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        #analysis-result {
+            margin-top: 25px;
+            padding: 25px;
+            background: #f8f9fa;
+            border: 1px dashed #cbd5e0;
+            border-radius: 6px;
+            font-style: italic;
+        }
+
+        blockquote {
+            font-size: 1.2em;
+            border-left: 4px solid #dee2e6;
+            margin: 30px 0;
+            padding: 10px 25px;
+            color: #576574;
+            background: #fcfcfc;
+        }
+
+        .footer-info {
+            margin-top: 60px;
+            font-size: 0.85em;
+            color: #95a5a6;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Aprendizaje Significativo en la Música</h1>
+    </header>
+
+    <section class="section">
+        <h2>1. La Base del Sujeto</h2>
+        <p>El aprendizaje musical no opera sobre un vacío cognitivo. Se construye sobre estructuras previas:</p>
+        
+        <div class="button-group">
+            <button class="concept-btn" onclick="toggleDef('esquemas')">Esquemas de Conocimiento</button>
+            <button class="concept-btn" onclick="toggleDef('interconexion')">Interconexión Profunda</button>
+        </div>
+
+        <div id="def-esquemas" class="definition-box">
+            <strong>Naturaleza Dinámica:</strong> Los esquemas no son estáticos; se reconfiguran tras cada experiencia práctica o analítica mediante procesos de asimilación.
+        </div>
+        <div id="def-interconexion" class="definition-box">
+            <strong>Estructura Cognitiva:</strong> Un nuevo concepto técnico puede alterar múltiples esquemas simultáneamente si la conexión es significativa.
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>2. Del Aprendizaje Verbal al Musical</h2>
+        <p>Relacionar la nueva información con lo ya conocido de forma <strong>no trivial</strong> define la calidad del aprendizaje.</p>
+        
+        <h3>Matriz de Posibilidades Pedagógicas</h3>
+        <div class="matrix-grid">
+            <div class="matrix-card" onclick="runAnalysis('rep-rec', this)">Repetitivo por Recepción</div>
+            <div class="matrix-card" onclick="runAnalysis('rep-desc', this)">Repetitivo por Descubrimiento</div>
+            <div class="matrix-card" onclick="runAnalysis('sig-rec', this)">Significativo por Recepción</div>
+            <div class="matrix-card" onclick="runAnalysis('sig-desc', this)">Significativo por Descubrimiento</div>
+        </div>
+        <div id="analysis-result">Selecciona una categoría de la matriz para ver su implicación en la clase de música.</div>
+    </section>
+
+    <section class="section">
+        <h2>3. Aplicación Instrumental</h2>
+        <p><strong>El Desafío de la Tradición Oral</strong><br>
+        La falta de planificación pedagógica suele derivar en un "desarrollo de repertorio" mecánico, obviando los procesos intelectuales del alumno.</p>
+
+        <blockquote>
+            "El estudio del músico es un proceso de aprendizaje físico que muchas veces no representa un desafío intelectual." — Nancy Toff
+        </blockquote>
+
+        <p><strong>Imaginación Sonora</strong><br>
+        Es el elemento generador. Sin una representación mental clara, el intérprete carece de un parámetro real para evaluar su propia ejecución física.</p>
+    </section>
+
+    <footer class="footer-info">
+        Recurso didáctico estático para la formación instrumental.
+    </footer>
+</div>
+
+<script>
+    function toggleDef(id) {
+        const target = document.getElementById('def-' + id);
+        const isVisible = target.style.display === 'block';
+        document.querySelectorAll('.definition-box').forEach(d => d.style.display = 'none');
+        if (!isVisible) target.style.display = 'block';
+    }
+
+    const matrixContent = {
+        'rep-rec': 'El alumno reproduce mecánicamente lo que el profesor dicta, sin comprender el "porqué" musical.',
+        'rep-desc': 'El alumno encuentra una solución técnica (ej. un fraseo) pero por azar, sin poder transferir ese éxito a otras obras.',
+        'sig-rec': 'El profesor explica un concepto (ej. la anacrusa) y el alumno logra identificarlo y aplicarlo conscientemente en su partitura.',
+        'sig-desc': 'El alumno deduce principios de interpretación basados en su conocimiento de estilo y teoría, aplicándolos de forma autónoma.'
+    };
+
+    function runAnalysis(type, element) {
+        document.getElementById('analysis-result').innerHTML = `<strong>Análisis Musical:</strong> ${matrixContent[type]}`;
+        document.querySelectorAll('.matrix-card').forEach(c => c.classList.remove('active'));
+        element.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
