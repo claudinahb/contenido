@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Académica - HBean Academia</title>
+    
+    <script src="scripts/js2pdf.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
+            --bg-color: #f4f7f6;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); padding: 20px; color: #333; }
+        .main-container { max-width: 700px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        .user-identification, .pregunta-bloque { margin-bottom: 25px; padding: 20px; border-radius: 8px; border: 1px solid #e1e8ed; background-color: #fdfdfd; }
+        .user-identification { border-left: 6px solid var(--primary-color); }
+        
+        label.titulo-pregunta { display: block; font-weight: 600; margin-bottom: 15px; color: var(--primary-color); font-size: 1.1em; }
+        input[type="text"], textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        textarea { height: 100px; resize: vertical; }
+
+        /* Estilos para Selectores (Radio y Checkbox) */
+        .selector-group { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .radio-group { display: flex; gap: 20px; }
+        
+        .option-item { display: flex; align-items: center; cursor: pointer; font-weight: 500; font-size: 14px; }
+        .option-item input { display: none; } 
+        
+        .custom-box {
+            width: 20px; height: 20px;
+            border: 2px solid #ccc;
+            margin-right: 12px;
+            display: inline-block;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        /* Forma circular para Radio (P1) */
+        .radio-option .custom-box { border-radius: 50%; }
+        /* Forma cuadrada para Checkbox (P2) */
+        .check-option .custom-box { border-radius: 4px; }
+
+        .option-item input:checked + .custom-box {
+            border-color: var(--success-color);
+            background-color: var(--success-color);
+        }
+
+        .option-item input:checked + .custom-box::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+        }
+
+        /* Punto blanco para radio */
+        .radio-option input:checked + .custom-box::after { width: 8px; height: 8px; border-radius: 50%; }
+        /* Check blanco para checkbox */
+        .check-option input:checked + .custom-box::after {
+            width: 5px; height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: translate(-50%, -65%) rotate(45deg);
+            background: transparent;
+        }
+
+        .btn-descarga {
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .btn-descarga:hover { background-color: #219150; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <h2 style="text-align: center; color: var(--primary-color);">Registro de Evaluación</h2>
+        
+        <div class="user-identification">
+            <label class="titulo-pregunta" for="full-name">Nombre y Apellidos:</label>
+            <input type="text" id="full-name" placeholder="Escriba su nombre completo..." required>
+        </div>
+
+        <div id="cuestionario">
+            <div class="pregunta-bloque">
+                <label id="preg1" class="titulo-pregunta">1. ¿El aprendizaje por descubrimiento es forzosamente significativo según Ausubel y Novak?</label>
+                <div class="radio-group">
+                    <label class="option-item radio-option">
+                        <input type="radio" name="p1-choice" value="VERDADERO">
+                        <span class="custom-box"></span> Verdadero
+                    </label>
+                    <label class="option-item radio-option">
+                        <input type="radio" name="p1-choice" value="FALSO">
+                        <span class="custom-box"></span> Falso
+                    </label>
+                </div>
+            </div>
+
+            <div class="pregunta-bloque">
+                <label id="preg2" class="titulo-pregunta">2. ¿Qué caracteriza a los esquemas de conocimiento en la estructura cognitiva?</label>
+                <div class="selector-group">
+                    <label class="option-item check-option">
+                        <input type="checkbox" name="p2-choice" value="A">
+                        <span class="custom-box"></span> A - Son estáticos y no se modifican con el tiempo.
+                    </label>
+                    <label class="option-item check-option">
+                        <input type="checkbox" name="p2-choice" value="B">
+                        <span class="custom-box"></span> B - Son independientes y no se conectan con otros elementos.
+                    </label>
+                    <label class="option-item check-option">
+                        <input type="checkbox" name="p2-choice" value="C">
+                        <span class="custom-box"></span> C - Tienen naturaleza dinámica y sus conexiones permiten reestructurar el conocimiento.
+                    </label>
+                </div>
+            </div>
+
+            <div class="pregunta-bloque">
+                <label id="preg3" class="titulo-pregunta">3. Basándote en la teoría, ¿cómo influye el perfil del estudiante en la transición de un aprendizaje memorístico a uno significativo en la clase de instrumento?</label>
+                <textarea id="r3" placeholder="Escriba su respuesta aquí..." required></textarea>
+            </div>
+        </div>
+
+        <button class="btn-descarga" onclick="generarPDF()">Descargar Resultados en PDF</button>
+    </div>
+
+    <script>
+        function limpiarParaArchivo(texto) {
+            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, "").trim();
+        }
+
+        async function generarPDF() {
+            const hoy = new Date();
+            const { jsPDF } = window.jspdf;
+            
+            const nombre = document.getElementById('full-name').value;
+            const r1Select = document.querySelector('input[name="p1-choice"]:checked');
+            
+            // Captura de checkboxes para la pregunta 2
+            const r2Checks = document.querySelectorAll('input[name="p2-choice"]:checked');
+            const r3 = document.getElementById('r3').value;
+
+            // Validación de obligatoriedad
+            if (!nombre.trim() || !r1Select || r2Checks.length === 0 || !r3.trim()) {
+                alert("Por favor, completa todos los campos. En la pregunta 2 debe marcar al menos una opción.");
+                return;
+            }
+
+            // Procesar letras elegidas para P2
+            const letrasElegidas = Array.from(r2Checks).map(cb => cb.value).join(", ");
+
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'in', format: 'letter' });
+
+            // Encabezado
+            doc.setFont("courier", "bold");
+            doc.setFontSize(14);
+            doc.text("EVALUACIÓN ACADÉMICA", 0.5, 0.8);
+            
+            doc.setFontSize(10);
+            doc.setFont("courier", "normal");
+            doc.text(`FECHA: ${hoy.toLocaleDateString()}`, 0.5, 1.1);
+            doc.text(`ESTUDIANTE: ${nombre.toUpperCase()}`, 0.5, 1.3);
+            doc.text("-".repeat(75), 0.5, 1.5);
+
+            let cursorY = 1.8;
+            const margenIz = 0.5;
+            const anchoMax = 7.5;
+
+            const escribirBloque = (titulo, contenido, esResaltado = false) => {
+                doc.setFont("courier", "bold");
+                const lineasTitulo = doc.splitTextToSize(titulo, anchoMax);
+                doc.text(lineasTitulo, margenIz, cursorY);
+                cursorY += (lineasTitulo.length * 0.2);
+                
+                if(esResaltado) doc.setFont("courier", "bolditalic");
+                else doc.setFont("courier", "normal");
+
+                const lineasContenido = doc.splitTextToSize(contenido, anchoMax);
+                doc.text(lineasContenido, margenIz, cursorY);
+                cursorY += (lineasContenido.length * 0.2) + 0.4;
+            };
+
+
+			/*
+            escribirBloque("PREGUNTA 1: ¿El aprendizaje por descubrimiento es forzosamente significativo?", r1Select.value, true);
+            escribirBloque("PREGUNTA 2: Caracterización de los esquemas de conocimiento (Opciones):", letrasElegidas, true);
+            escribirBloque("PREGUNTA 3: Transición de aprendizaje memorístico a significativo:", r3);
+			*/
+            escribirBloque(document.getElementById("preg1").innerHTML, r1Select.value, true);
+            escribirBloque(document.getElementById("preg2").innerHTML, letrasElegidas, true);
+            escribirBloque(document.getElementById("preg3").innerHTML, r3);
+
+            doc.setFont("courier", "normal");
+            doc.text("-".repeat(75), 0.5, cursorY);
+            //doc.text("FIN DEL REPORTE - HBEAN ACADEMIA", 0.5, cursorY + 0.2);
+
+            const fechaIso = hoy.toISOString().split('T')[0];
+            const nombreArchivo = `${fechaIso} ${limpiarParaArchivo(nombre)}.pdf`;
+            doc.save(nombreArchivo);
+        }
+    </script>
+</body>
+</html>
