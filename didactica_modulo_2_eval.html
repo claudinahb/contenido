@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación Académica - HBean Academia</title>
+    <title>Didçactica Módlulo 2 - Evaluación</title>
     
     <script src="scripts/js2pdf.js"></script>
 
@@ -205,7 +205,7 @@
 
             doc.setFont("courier", "normal");
             doc.text("-".repeat(75), 0.5, cursorY);
-            //doc.text("FIN DEL REPORTE - HBEAN ACADEMIA", 0.5, cursorY + 0.2);
+            /* doc.text("FIN DEL REPORTE - HBEAN ACADEMIA", 0.5, cursorY + 0.2); */
 
             const fechaIso = hoy.toISOString().split('T')[0];
             const nombreArchivo = `${fechaIso} ${limpiarParaArchivo(nombre)}.pdf`;
