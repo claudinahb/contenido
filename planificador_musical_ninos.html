@@ -505,6 +505,9 @@ body {
       <button class="btn-tanda" onclick="changeTanda(1)">+</button>
     </div>
   </div>
+<div id="progreso-tandas" style="text-align: center; margin-bottom: 18px; font-weight: 800; color: var(--purple); font-size: 14px;">
+  Tandas completadas: <span id="terminadas-num">0</span>
+</div>
 
   <!-- NOTES -->
   <div class="notes-card">
@@ -621,25 +624,6 @@ function stopTimer() {
   document.getElementById('btn-play').textContent = '▶ ¡Continuar!';
 }
 
-/*
-function tick() {
-  if (secondsLeft > 0) {
-    secondsLeft--;
-    updateClock();
-  } else {
-    stopTimer();
-    const nombre = FASES[faseActual].nombre;
-    showNotif('¡Muy bien! ' + nombre + ' ✓');
-    const next = faseActual + 1;
-    if (next < FASES.length) {
-      setTimeout(() => selectPhase(next), 1500);
-    } else {
-      document.getElementById('clock-phase').textContent = '¡Práctica completa! 🎉';
-      document.getElementById('completion').classList.add('show');
-    }
-  }
-}*/
-
 function tick() {
   if (secondsLeft > 0) {
     secondsLeft--;
@@ -656,7 +640,8 @@ function tick() {
     } else {
       // SI HEMOS TERMINADO LAS 3 FASES:
       tandas_terminadas++; // Sumamos una tanda completa
-      
+      document.getElementById('terminadas-num').textContent = tandas_terminadas;
+	  
       if (tandas > 0) {
         tandas--; // Restamos una tanda del objetivo
         document.getElementById('tanda-num').textContent = tandas;
@@ -762,6 +747,17 @@ async function descargar() {
     doc.setFontSize(11);
     const splitNotes = doc.splitTextToSize(notas, 165);
     doc.text(splitNotes, 20, 120);
+
+    // Actualizar la interfaz
+    tandas_terminadas = 0;
+    document.getElementById('terminadas-num').textContent = "0";
+    document.getElementById('tanda-num').textContent = "1";
+    
+    // Limpiar notas (opcional, por si quieres empezar de cero)
+    document.querySelector('.notes-area').value = "";
+    
+    // Quitar mensaje de felicitación si estaba visible
+    document.getElementById('completion').classList.remove('show');
 
     // 5. Descarga
     doc.save(`Práctica_${fecha.replace(/\//g, '-')}.pdf`);
