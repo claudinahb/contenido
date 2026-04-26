@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Planificador Musical 🦉</title>
+<script src="scripts/js2pdf.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --cream: #FFF8EE;
+  --warm: #FFF0D6;
+  --purple: #7C5CBF;
+  --purple-light: #EDE6FF;
+  --purple-dark: #5A3FA0;
+  --teal: #2BBFA0;
+  --teal-light: #D4F5EE;
+  --amber: #F5A623;
+  --amber-light: #FFF0CC;
+  --coral: #FF7C6E;
+  --coral-light: #FFE8E6;
+  --blue: #5BA8F5;
+  --blue-light: #E0F0FF;
+  --green: #5CC97A;
+  --green-light: #E0F7E6;
+  --text: #2D2150;
+  --muted: #8878B0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ======= HEADER ======= */
+.header {
+  background: linear-gradient(135deg, #7C5CBF 0%, #5A3FA0 100%);
+  padding: 24px 20px 30px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 50%;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -20px;
+  width: 100px; height: 100px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.star { font-size: 14px; animation: twinkle 2s infinite; }
+.star:nth-child(2) { animation-delay: 0.4s; }
+.star:nth-child(3) { animation-delay: 0.8s; }
+@keyframes twinkle { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.header h1 {
+  font-size: 26px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  margin-bottom: 4px;
+}
+.header p { font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 600; }
+
+/* ======= MAIN ======= */
+.main { max-width: 420px; margin: 0 auto; padding: 20px 16px 50px; }
+
+/* ======= OWL ======= */
+.owl-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+  margin-top: -10px;
+}
+
+/* ======= CLOCK TIMER ======= */
+.clock-card {
+  background: white;
+  border-radius: 24px;
+  padding: 20px 16px 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 20px rgba(124,92,191,0.12);
+  text-align: center;
+  border: 2px solid var(--purple-light);
+}
+
+.clock-phase {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+}
+
+.clock-svg-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.clock-digital {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--purple-dark);
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+}
+
+.timer-controls { display: flex; gap: 8px; justify-content: center; }
+
+.btn-play {
+  padding: 11px 28px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124,92,191,0.35);
+  transition: transform 0.1s;
+}
+.btn-play:active { transform: scale(0.96); }
+
+.btn-skip, .btn-reset {
+  padding: 11px 16px;
+  border-radius: 50px;
+  border: 2px solid var(--purple-light);
+  background: white;
+  color: var(--purple);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.btn-skip:active, .btn-reset:active { transform: scale(0.96); }
+
+/* ======= PHASES ======= */
+.section-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.phases { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+
+.phase {
+  border-radius: 16px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+  overflow: hidden;
+}
+.phase:active { transform: scale(0.98); }
+.phase.active-phase { border-color: currentColor; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+
+.phase-inner { display: flex; align-items: center; gap: 12px; padding: 13px 14px; }
+
+.phase-emoji { font-size: 24px; flex-shrink: 0; }
+.phase-info { flex: 1; }
+.phase-name { font-size: 15px; font-weight: 800; margin-bottom: 2px; }
+.phase-desc { font-size: 12px; font-weight: 600; opacity: 0.75; line-height: 1.4; }
+.phase-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(255,255,255,0.6);
+  white-space: nowrap;
+}
+
+.phase-bar-track { height: 5px; background: rgba(0,0,0,0.06); }
+.phase-bar-fill { height: 100%; transition: width 0.3s; }
+
+/* Phase colors */
+.p-tecnica { background: var(--coral-light); color: #c0392b; }
+.p-tecnica .phase-bar-fill { background: var(--coral); }
+.p-tecnica.active-phase { border-color: var(--coral) !important; }
+
+.p-lectura { background: var(--blue-light); color: #1a5fa0; }
+.p-lectura .phase-bar-fill { background: var(--blue); }
+.p-lectura.active-phase { border-color: var(--blue) !important; }
+
+.p-obra { background: var(--green-light); color: #2d7a45; }
+.p-obra .phase-bar-fill { background: var(--green); }
+.p-obra.active-phase { border-color: var(--green) !important; }
+
+/* ======= REST ======= */
+.rest-card {
+  background: var(--amber-light);
+  border-radius: 16px;
+  border: 2px solid #f5c842;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.rest-emoji { font-size: 24px; }
+.rest-text { font-size: 13px; font-weight: 700; color: #7a4f00; line-height: 1.5; }
+
+/* ======= TANDA ======= */
+.tanda-card {
+  background: var(--purple-light);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.tanda-text { flex: 1; font-size: 13px; font-weight: 700; color: var(--purple-dark); line-height: 1.4; }
+.tanda-counter { display: flex; align-items: center; gap: 8px; }
+.btn-tanda {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--purple);
+  background: white;
+  color: var(--purple);
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Nunito', sans-serif;
+  transition: transform 0.1s;
+}
+.btn-tanda:active { transform: scale(0.9); }
+.tanda-num { font-size: 26px; font-weight: 900; color: var(--purple-dark); min-width: 30px; text-align: center; }
+
+/* ======= STARS ROW ======= */
+.stars-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.star-btn {
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform 0.15s;
+  filter: grayscale(1);
+  opacity: 0.4;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.star-btn.lit { filter: none; opacity: 1; animation: popstar 0.3s ease; }
+@keyframes popstar { 0%{transform:scale(1)} 50%{transform:scale(1.4)} 100%{transform:scale(1)} }
+
+/* ======= NOTES ======= */
+.notes-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid var(--purple-light);
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.notes-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.notes-area {
+  width: 100%; border: none; background: transparent;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--text); resize: none; outline: none;
+  line-height: 1.6; min-height: 60px;
+}
+.notes-area::placeholder { color: var(--muted); opacity: 0.6; }
+
+/* ======= DOWNLOAD ======= */
+.btn-download {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--teal), #1a9a82);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(43,191,160,0.35);
+  transition: transform 0.1s;
+  margin-bottom: 16px;
+}
+.btn-download:active { transform: scale(0.98); }
+
+/* ======= NOTIF ======= */
+.notif {
+  position: fixed; top: 16px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--purple-dark); color: white;
+  padding: 11px 22px; border-radius: 30px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 700;
+  opacity: 0; transition: opacity 0.3s;
+  pointer-events: none; z-index: 999; white-space: nowrap;
+}
+.notif.show { opacity: 1; }
+
+/* ======= COMPLETION ======= */
+.completion {
+  display: none;
+  background: linear-gradient(135deg, #7C5CBF, #5A3FA0);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 18px;
+  color: white;
+}
+.completion.show { display: block; animation: popIn 0.4s ease; }
+@keyframes popIn { 0%{transform:scale(0.8);opacity:0} 100%{transform:scale(1);opacity:1} }
+.completion h2 { font-size: 24px; font-weight: 900; margin-bottom: 8px; }
+.completion p { font-size: 14px; opacity: 0.85; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="stars">
+    <span class="star">✨</span>
+    <span class="star">🎵</span>
+    <span class="star">✨</span>
+  </div>
+  <h1>Mi Práctica Musical 🎶</h1>
+  <p>HBean Academia · ¡Al concierto! 🎼</p>
+</div>
+
+<div class="main">
+
+  <!-- OWL SVG -->
+  <div class="owl-wrap">
+    <svg width="110" height="120" viewBox="0 0 110 120" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body -->
+      <ellipse cx="55" cy="80" rx="34" ry="36" fill="#7C5CBF"/>
+      <!-- Belly -->
+      <ellipse cx="55" cy="88" rx="22" ry="24" fill="#EDE6FF"/>
+      <!-- Belly stripes -->
+      <ellipse cx="55" cy="85" rx="15" ry="4" fill="rgba(124,92,191,0.15)"/>
+      <ellipse cx="55" cy="93" rx="13" ry="4" fill="rgba(124,92,191,0.15)"/>
+      <ellipse cx="55" cy="101" rx="10" ry="3.5" fill="rgba(124,92,191,0.15)"/>
+      <!-- Wings -->
+      <ellipse cx="24" cy="83" rx="14" ry="20" fill="#5A3FA0" transform="rotate(-10 24 83)"/>
+      <ellipse cx="86" cy="83" rx="14" ry="20" fill="#5A3FA0" transform="rotate(10 86 83)"/>
+      <!-- Head -->
+      <ellipse cx="55" cy="46" rx="28" ry="26" fill="#7C5CBF"/>
+      <!-- Ear tufts -->
+      <polygon points="35,24 30,8 42,20" fill="#5A3FA0"/>
+      <polygon points="75,24 80,8 68,20" fill="#5A3FA0"/>
+      <!-- Eye whites -->
+      <circle cx="43" cy="46" r="11" fill="white"/>
+      <circle cx="67" cy="46" r="11" fill="white"/>
+      <!-- Eye circles -->
+      <circle cx="43" cy="46" r="8" fill="#F5A623"/>
+      <circle cx="67" cy="46" r="8" fill="#F5A623"/>
+      <!-- Pupils -->
+      <circle cx="43" cy="46" r="4.5" fill="#2D2150"/>
+      <circle cx="67" cy="46" r="4.5" fill="#2D2150"/>
+      <!-- Eye shine -->
+      <circle cx="45" cy="44" r="1.5" fill="white"/>
+      <circle cx="69" cy="44" r="1.5" fill="white"/>
+      <!-- Beak -->
+      <polygon points="55,52 50,57 60,57" fill="#F5A623"/>
+      <!-- Feet -->
+      <line x1="45" y1="113" x2="40" y2="120" stroke="#F5A623" stroke-width="3" stroke-linecap="round"/>
+      <line x1="45" y1="113" x2="45" y2="120" stroke="#F5A623" stroke-width="3" stroke-linecap="round"/>
+      <line x1="45" y1="113" x2="50" y2="120" stroke="#F5A623" stroke-width="3" stroke-linecap="round"/>
+      <line x1="65" y1="113" x2="60" y2="120" stroke="#F5A623" stroke-width="3" stroke-linecap="round"/>
+      <line x1="65" y1="113" x2="65" y2="120" stroke="#F5A623" stroke-width="3" stroke-linecap="round"/>
+      <line x1="65" y1="113" x2="70" y2="120" stroke="#F5A623" stroke-width="3" stroke-linecap="round"/>
+      <!-- Music note on wing -->
+      <text x="19" y="80" font-size="12" fill="rgba(255,255,255,0.6)">♪</text>
+      <text x="78" y="80" font-size="12" fill="rgba(255,255,255,0.6)">♫</text>
+    </svg>
+  </div>
+
+  <!-- CLOCK TIMER -->
+  <div class="clock-card">
+    <div class="clock-phase" id="clock-phase">Elige una fase para empezar ⬇</div>
+
+    <div class="clock-svg-wrap">
+      <svg id="clock-svg" width="140" height="140" viewBox="0 0 140 140">
+        <!-- Clock face -->
+        <circle cx="70" cy="70" r="64" fill="#EDE6FF" stroke="#7C5CBF" stroke-width="3"/>
+        <!-- Hour marks -->
+        <g id="marks"></g>
+        <!-- Progress arc -->
+        <circle id="clock-arc" cx="70" cy="70" r="54"
+          fill="none" stroke="#7C5CBF" stroke-width="8"
+          stroke-linecap="round"
+          stroke-dasharray="339.3" stroke-dashoffset="0"
+          transform="rotate(-90 70 70)"
+          style="transition: stroke-dashoffset 0.9s linear;"/>
+        <!-- Center dot -->
+        <circle cx="70" cy="70" r="5" fill="#7C5CBF"/>
+        <!-- Minute hand -->
+        <line id="hand-min" x1="70" y1="70" x2="70" y2="22" stroke="#5A3FA0" stroke-width="3" stroke-linecap="round"/>
+        <!-- Second hand -->
+        <line id="hand-sec" x1="70" y1="70" x2="70" y2="18" stroke="#F5A623" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="clock-digital" id="clock-digital">25:00</div>
+
+    <div class="timer-controls">
+      <button class="btn-play" id="btn-play" onclick="toggleTimer()">▶ ¡Al concierto!</button>
+      <button class="btn-skip" onclick="skipPhase()">Siguiente ›</button>
+      <button class="btn-reset" onclick="resetTimer()">↺</button>
+    </div>
+  </div>
+
+  <!-- PHASES -->
+  <div class="section-title">Las 3 partes de tu práctica</div>
+  <div class="phases">
+    <div class="phase p-tecnica" id="ph-0" onclick="selectPhase(0)">
+      <div class="phase-bar-track"><div class="phase-bar-fill" style="width:20%"></div></div>
+      <div class="phase-inner">
+        <div class="phase-emoji">🎹</div>
+        <div class="phase-info">
+          <div class="phase-name">Técnica</div>
+          <div class="phase-desc">Ejercicios y escalas para calentar</div>
+        </div>
+        <div class="phase-badge">5 min</div>
+      </div>
+    </div>
+
+    <div class="phase p-lectura" id="ph-1" onclick="selectPhase(1)">
+      <div class="phase-bar-track"><div class="phase-bar-fill" style="width:40%"></div></div>
+      <div class="phase-inner">
+        <div class="phase-emoji">📖</div>
+        <div class="phase-info">
+          <div class="phase-name">Lectura</div>
+          <div class="phase-desc">Aprendo a leer la música</div>
+        </div>
+        <div class="phase-badge">10 min</div>
+      </div>
+    </div>
+
+    <div class="phase p-obra" id="ph-2" onclick="selectPhase(2)">
+      <div class="phase-bar-track"><div class="phase-bar-fill" style="width:40%"></div></div>
+      <div class="phase-inner">
+        <div class="phase-emoji">🎶</div>
+        <div class="phase-info">
+          <div class="phase-name">Mi obra</div>
+          <div class="phase-desc">Ensayo mi pieza favorita</div>
+        </div>
+        <div class="phase-badge">10 min</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLETION -->
+  <div class="completion" id="completion">
+    <div style="font-size:40px;margin-bottom:8px">🎉</div>
+    <h2>¡Felicidades!</h2>
+    <p>¡Completaste tu práctica de hoy!<br>¡Eres un músico increíble! 🌟</p>
+  </div>
+
+  <!-- REST -->
+  <div class="rest-card">
+    <div class="rest-emoji">🧃</div>
+    <div class="rest-text">Después de cada práctica:<br><strong>5 minutos de descanso</strong> 🎈 ¡Bebe agua y descansa!</div>
+  </div>
+
+  <!-- STARS RATING -->
+  <div class="section-title" style="text-align:center">¿Cómo fue tu práctica de hoy?</div>
+  <div class="stars-row" id="stars-row">
+    <button class="star-btn" onclick="rateStar(1)">⭐</button>
+    <button class="star-btn" onclick="rateStar(2)">⭐</button>
+    <button class="star-btn" onclick="rateStar(3)">⭐</button>
+    <button class="star-btn" onclick="rateStar(4)">⭐</button>
+    <button class="star-btn" onclick="rateStar(5)">⭐</button>
+  </div>
+
+  <!-- TANDA -->
+  <div class="tanda-card">
+    <div class="tanda-text">🎵 Tandas de hoy<br><span style="font-weight:600;opacity:0.7;font-size:12px">¡Puedes hacer más!</span></div>
+    <div class="tanda-counter">
+      <button class="btn-tanda" onclick="changeTanda(-1)">−</button>
+      <span class="tanda-num" id="tanda-num">1</span>
+      <button class="btn-tanda" onclick="changeTanda(1)">+</button>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="notes-card">
+    <div class="notes-label">📝 ¿Qué aprendí hoy?</div>
+    <textarea class="notes-area" placeholder="Escribe algo que aprendiste hoy... ¡o dibuja una nota musical!"></textarea>
+  </div>
+
+  <!-- DOWNLOAD -->
+  <button class="btn-download" onclick="descargar()">
+    ⬇ Guardar
+  </button>
+
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+const FASES = [
+  { nombre: 'Técnica 🎹', minutos: 5, color: '#FF7C6E' },
+  { nombre: 'Lectura 📖', minutos: 10, color: '#5BA8F5' },
+  { nombre: 'Mi obra 🎶', minutos: 10, color: '#5CC97A' },
+];
+const TOTAL = 25;
+
+let faseActual = -1;
+let secondsLeft = 0;
+let totalSeconds = 0;
+let running = false;
+let interval = null;
+let starRating = 0;
+let tandas = 1;
+let tandas_terminadas = 0;
+
+// Draw clock marks
+(function drawMarks() {
+  const g = document.getElementById('marks');
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const r1 = i % 3 === 0 ? 56 : 58;
+    const r2 = 64;
+    const x1 = 70 + r1 * Math.cos(angle);
+    const y1 = 70 + r1 * Math.sin(angle);
+    const x2 = 70 + r2 * Math.cos(angle);
+    const y2 = 70 + r2 * Math.sin(angle);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('stroke', i % 3 === 0 ? '#7C5CBF' : '#C4B5E8');
+    line.setAttribute('stroke-width', i % 3 === 0 ? '2.5' : '1.5');
+    line.setAttribute('stroke-linecap', 'round');
+    g.appendChild(line);
+  }
+})();
+
+function updateClock() {
+  const elapsed = totalSeconds - secondsLeft;
+  const pct = totalSeconds > 0 ? elapsed / totalSeconds : 0;
+
+  // Arc (339.3 = 2π×54)
+  const circ = 339.3;
+  document.getElementById('clock-arc').setAttribute('stroke-dashoffset', circ * (1 - pct));
+
+  // Set arc color
+  const f = faseActual >= 0 ? FASES[faseActual] : null;
+  if (f) document.getElementById('clock-arc').setAttribute('stroke', f.color);
+
+  // Hands — minute hand = progress through phase
+  const minAngle = pct * 360 - 90;
+  const secAngle = ((secondsLeft % 60) / 60) * 360 - 90;
+  const toRad = a => a * Math.PI / 180;
+  const mx = 70 + 48 * Math.cos(toRad(minAngle));
+  const my = 70 + 48 * Math.sin(toRad(minAngle));
+  document.getElementById('hand-min').setAttribute('x2', mx);
+  document.getElementById('hand-min').setAttribute('y2', my);
+  const sx = 70 + 52 * Math.cos(toRad(secAngle));
+  const sy = 70 + 52 * Math.sin(toRad(secAngle));
+  document.getElementById('hand-sec').setAttribute('x2', sx);
+  document.getElementById('hand-sec').setAttribute('y2', sy);
+
+  // Digital
+  const m = Math.floor(secondsLeft / 60);
+  const s = secondsLeft % 60;
+  document.getElementById('clock-digital').textContent = m + ':' + String(s).padStart(2, '0');
+}
+
+function selectPhase(i) {
+  if (running) stopTimer();
+  faseActual = i;
+  const f = FASES[i];
+  totalSeconds = f.minutos * 60;
+  secondsLeft = totalSeconds;
+  document.getElementById('clock-phase').textContent = f.nombre;
+  document.getElementById('btn-play').textContent = '▶ ¡Al concierto!';
+  document.querySelectorAll('.phase').forEach((el, idx) => {
+    el.classList.toggle('active-phase', idx === i);
+  });
+  updateClock();
+}
+
+function toggleTimer() {
+  if (faseActual < 0) { selectPhase(0); return; }
+  running ? stopTimer() : startTimer();
+}
+
+function startTimer() {
+  running = true;
+  document.getElementById('btn-play').textContent = '⏸ Pausar';
+  interval = setInterval(tick, 1000);
+}
+
+function stopTimer() {
+  running = false;
+  clearInterval(interval);
+  document.getElementById('btn-play').textContent = '▶ ¡Continuar!';
+}
+
+/*
+function tick() {
+  if (secondsLeft > 0) {
+    secondsLeft--;
+    updateClock();
+  } else {
+    stopTimer();
+    const nombre = FASES[faseActual].nombre;
+    showNotif('¡Muy bien! ' + nombre + ' ✓');
+    const next = faseActual + 1;
+    if (next < FASES.length) {
+      setTimeout(() => selectPhase(next), 1500);
+    } else {
+      document.getElementById('clock-phase').textContent = '¡Práctica completa! 🎉';
+      document.getElementById('completion').classList.add('show');
+    }
+  }
+}*/
+
+function tick() {
+  if (secondsLeft > 0) {
+    secondsLeft--;
+    updateClock();
+  } else {
+    stopTimer();
+    const nombre = FASES[faseActual].nombre;
+    showNotif('¡Muy bien! ' + nombre + ' ✓');
+    
+    const next = faseActual + 1;
+    if (next < FASES.length) {
+      // Si hay una siguiente fase, pasar a ella
+      setTimeout(() => selectPhase(next), 1500);
+    } else {
+      // SI HEMOS TERMINADO LAS 3 FASES:
+      tandas_terminadas++; // Sumamos una tanda completa
+      
+      if (tandas > 0) {
+        tandas--; // Restamos una tanda del objetivo
+        document.getElementById('tanda-num').textContent = tandas;
+      }
+
+      document.getElementById('clock-phase').textContent = '¡Tanda completada! 🎉';
+      document.getElementById('completion').classList.add('show');
+      
+      showNotif(`¡Tanda ${tandas_terminadas} terminada!`);
+    }
+  }
+}
+
+function skipPhase() {
+  stopTimer();
+  const next = faseActual + 1;
+  if (next < FASES.length) selectPhase(next);
+  else showNotif('¡Ya terminaste todo! 🎉');
+}
+
+function resetTimer() {
+  stopTimer();
+  if (faseActual >= 0) {
+    totalSeconds = FASES[faseActual].minutos * 60;
+    secondsLeft = totalSeconds;
+    updateClock();
+  }
+  document.getElementById('btn-play').textContent = '▶ ¡Al concierto!';
+}
+
+function changeTanda(d) {
+  tandas = Math.max(1, tandas + d);
+  document.getElementById('tanda-num').textContent = tandas;
+}
+
+function rateStar(n) {
+  starRating = n;
+  document.querySelectorAll('.star-btn').forEach((btn, i) => {
+    btn.classList.toggle('lit', i < n);
+  });
+  const msgs = ['','¡Sigue practicando! 💪','¡Muy bien! 😊','¡Genial! 🌟','¡Súper! 🎉','¡Eres increíble! 🏆'];
+  showNotif(msgs[n]);
+}
+
+function showNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// Función auxiliar para dibujar estrellas perfectas en el PDF
+function drawStar(doc, x, y, r, color) {
+    const points = 5;
+    const step = Math.PI / points;
+    doc.setFillColor(color[0], color[1], color[2]);
+    
+    doc.moveTo(x, y - r);
+    for (let i = 0; i < 2 * points; i++) {
+        const curR = (i % 2 === 0) ? r : r / 2.5;
+        const curX = x + curR * Math.sin(i * step);
+        const curY = y - curR * Math.cos(i * step);
+        doc.lineTo(curX, curY);
+    }
+    doc.fill();
+}
+
+async function descargar() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const fecha = new Date().toLocaleDateString();
+    const notas = document.querySelector('.notes-area').value || "Hoy me enfoqué en el sonido y la rítmica.";
+
+    // 1. Encabezado con Estilo
+    doc.setFillColor(124, 92, 191); // Púrpura HBean
+    doc.rect(0, 0, 210, 40, 'F');
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Reporte de Práctica Musical", 20, 25);
+
+    // 2. Sección de Tandas (Progreso)
+    doc.setTextColor(45, 33, 80);
+    doc.setFontSize(16);
+    doc.text("Progreso de hoy", 20, 55);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.text(`Tandas realizadas: ${tandas_terminadas}`, 20, 65);
+
+    // 3. Calificación con Estrellas Vectoriales
+    doc.setFont("helvetica", "bold");
+    doc.text("Calificación:", 20, 80);
+    
+    for (let i = 0; i < 5; i++) {
+        const color = (i < starRating) ? [245, 166, 35] : [220, 220, 220]; // Ámbar vs Gris
+        drawStar(doc, 25 + (i * 12), 92, 5, color);
+    }
+
+    // 4. Notas de la Sesión
+    doc.setFontSize(16);
+    doc.text("Lo que aprendí:", 20, 110);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    const splitNotes = doc.splitTextToSize(notas, 165);
+    doc.text(splitNotes, 20, 120);
+
+    // 5. Descarga
+    doc.save(`Práctica_${fecha.replace(/\//g, '-')}.pdf`);
+    showNotif("✅ PDF generado con éxito");
+}
+
+// Init clock display
+updateClock();
+</script>
+</body>
+</html>
